@@ -17,9 +17,10 @@
 
 ## Установка
 
+```bash
+
 1. Клонируйте репозиторий:
 
-```bash
 git clone <URL_репозитория>
 cd <название_папки>
 
@@ -42,6 +43,8 @@ pip install -r requirements.txt
 API_TOKEN=ваш_токен_бота
 DB_NAME=quiz.db
 
+```
+
 ## Использование
 
 Запуск бота:
@@ -56,10 +59,10 @@ python bot.py
 
 Кнопки с вариантами ответов — для выбора ответа.
 
-Зависимости
+## Зависимости
 
-aiogram — библиотека для Telegram Bot API
+- aiogram — библиотека для Telegram Bot API
 
-aiosqlite — асинхронная работа с SQLite
+- aiosqlite — асинхронная работа с SQLite
 
-python-dotenv — загрузка переменных окружения из .env
+- python-dotenv — загрузка переменных окружения из .env
