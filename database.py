@@ -18,6 +18,48 @@ async def create_table():
         await db.commit()
 
 
+async def get_quiz_index(user_id: int):
+    """Получение конретного вопроса из базы данных."""
+    async with aiosqlite.connect(DB_NAME) as db:
+        async with db.execute(
+            """
+            SELECT question_index FROM quiz_state WHERE user_id = ?
+            """,
+            (user_id,)
+        ) as cursor:
+            result = await cursor.fetchone()
+            return result[0] if result else None
+
+
+async def get_right_answers(user_id: int):
+    """"Получение количества правильных ответов из базы данных."""
+    async with aiosqlite.connect(DB_NAME) as db:
+        async with db.execute(
+            """
+            SELECT correct_answer FROM quiz_state WHERE user_id = ?
+            """,
+            (user_id,)
+        ) as cursor:
+            result = await cursor.fetchone()
+            return result[0] if result else 0
+
+
+async def start_new_attempt(user_id: int):
+    """Обновление статистики при новом запуске квиза."""
+    async with aiosqlite.connect(DB_NAME) as db:
+        await db.execute(
+            """
+            INSERT INTO quiz_state(user_id, question_index, correct_answer)
+            VALUES (?, 0, 0)
+            ON CONFLICT(user_id) DO UPDATE
+            SET question_index = 0,
+                correct_answer = 0
+            """,
+            (user_id,)
+        )
+        await db.commit()
+
+
 async def update_quiz_index(user_id: int, question_index: int):
     """Обновление данных о конкретном вопросе."""
     async with aiosqlite.connect(DB_NAME) as db:
@@ -53,29 +95,3 @@ async def update_right_answer(user_id: int):
                 (user_id, 1)
             )
         await db.commit()
-
-
-async def get_quiz_index(user_id: int):
-    """Получение конретного вопроса из базы данных."""
-    async with aiosqlite.connect(DB_NAME) as db:
-        async with db.execute(
-            """
-            SELECT question_index FROM quiz_state WHERE user_id = ?
-            """,
-            (user_id,)
-        ) as cursor:
-            result = await cursor.fetchone()
-            return result[0] if result else None
-
-
-async def get_right_answers(user_id: int):
-    """"Получение количества правильных ответов из базы данных."""
-    async with aiosqlite.connect(DB_NAME) as db:
-        async with db.execute(
-            """
-            SELECT correct_answer FROM quiz_state WHERE user_id = ?
-            """,
-            (user_id,)
-        ) as cursor:
-            result = await cursor.fetchone()
-            return result[0] if result else 0

@@ -9,8 +9,8 @@ from aiogram.utils.keyboard import (
 from dotenv import load_dotenv
 
 from database import (
-    create_table, update_quiz_index,
-    update_right_answer, get_quiz_index, get_right_answers
+    create_table, get_quiz_index, get_right_answers,
+    start_new_attempt, update_quiz_index, update_right_answer
 )
 from questions import quiz_data
 
@@ -46,6 +46,7 @@ async def new_quiz(message: types.Message):
     """Начало нового квиза."""
     user_id: int = message.from_user.id
     current_question_index: int = 0
+    await start_new_attempt(message.from_user.id)
     await update_quiz_index(user_id, current_question_index)
     await get_question(message, user_id)
 
