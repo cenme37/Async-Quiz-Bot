@@ -17,6 +17,7 @@ async def create_table():
         )
         await db.commit()
 
+
 async def update_quiz_index(user_id: int, question_index: int):
     """Обновление данных о конкретном вопросе."""
     async with aiosqlite.connect(DB_NAME) as db:
@@ -24,11 +25,13 @@ async def update_quiz_index(user_id: int, question_index: int):
             """
             INSERT INTO quiz_state (user_id, question_index)
             VALUES (?, ?)
-            ON CONFLICT(user_id) DO UPDATE SET question_index = excluded.question_index
+            ON CONFLICT(user_id) DO UPDATE
+            SET question_index = excluded.question_index
             """,
             (user_id, question_index)
         )
         await db.commit()
+
 
 async def update_right_answer(user_id: int):
     """Обновляет количество правильных ответов."""
@@ -44,12 +47,13 @@ async def update_right_answer(user_id: int):
         if db.total_changes == 0:
             await db.execute(
                 """
-                INSERT INTO quiz_state (user_id, correct_answer) 
+                INSERT INTO quiz_state (user_id, correct_answer)
                 VALUES (?, ?)
                 """,
                 (user_id, 1)
             )
         await db.commit()
+
 
 async def get_quiz_index(user_id: int):
     """Получение конретного вопроса из базы данных."""
@@ -62,6 +66,7 @@ async def get_quiz_index(user_id: int):
         ) as cursor:
             result = await cursor.fetchone()
             return result[0] if result else None
+
 
 async def get_right_answers(user_id: int):
     """"Получение количества правильных ответов из базы данных."""
